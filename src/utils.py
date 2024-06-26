@@ -15,3 +15,4 @@ def read_excel_file(input_file):
 
 input_file = "data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls"
 print(read_excel_file(input_file))
+
