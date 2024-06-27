@@ -14,74 +14,61 @@ def greeting():
     elif 0 <= now.hour < 6:
         return "Доброй ночи!"
 
-print(greeting())
+# print(greeting())
 
 # как вывести в красивый список, как округлить до двух знаков?
 def card_operations_info(transactions):
     """Функция выводит общую информацию по карте"""
     data = pd.read_excel(transactions)
 
-    card_data = {}
+    cards = {}
 
     for index, row in data.iterrows():
         card_number = str(row['Номер карты'])[-4:] if pd.notnull(row['Номер карты']) else None
         total_spent = float(row['Сумма операции с округлением'])
 
-        if card_number in card_data:
-            card_data[card_number]['total_spent'] += total_spent
+        if card_number in cards:
+            cards[card_number]['total_spent'] += total_spent
         else:
-            card_data[card_number] = {
+            cards[card_number] = {
                 'last_digits': card_number,
                 'total_spent': round(total_spent, 2),
                 'cashback': float(total_spent // 100)
             }
 
-    result = [value for value in card_data.values()]
+    card_info = [value for value in cards.values()]
 
-    return result
+    return {"cards": card_info}
 
 transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
-result = card_operations_info(transactions)
-print(result)
 
-# "top_transactions": [
+# print(card_operations_info(transactions))
+
+def top_five_transactions(transactions):
+    df = pd.read_excel(transactions)
+    top_transactions = df.nlargest(5, "Сумма платежа")
+
+    top_transactions_list = []
+    for index, row in top_transactions.iterrows():
+        data = {
+            "date": row["Дата платежа"],
+            "amount": row["Сумма платежа"],
+            "category": row["Категория"],
+            "description": row["Описание"]
+        }
+        top_transactions_list.append(data)
+    return {"top_transactions": top_transactions_list}
+
+transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
+# print(top_five_transactions(transactions))
+
+# "currency_rates": [
 #     {
-#         "date": "21.12.2021",
-#         "amount": 1198.23,
-#         "category": "Переводы",
-#         "description": "Перевод Кредитная карта. ТП 10.2 RUR"
+#       "currency": "USD",
+#       "rate": 73.21
 #     },
 #     {
-#         "date": "20.12.2021",
-#         "amount": 829.00,
-#         "category": "Супермаркеты",
-#         "description": "Лента"
-#     },
-#     {
-#         "date": "20.12.2021",
-#         "amount": 421.00,
-#         "category": "Различные товары",
-#         "description": "Ozon.ru"
-#     },
-#     {
-#         "date": "16.12.2021",
-#         "amount": -14216.42,
-#         "category": "ЖКХ",
-#         "description": "ЖКУ Квартира"
-#     },
-#     {
-#         "date": "16.12.2021",
-#         "amount": 453.00,
-#         "category": "Бонусы",
-#         "description": "Кешбэк за обычные покупки"
+#       "currency": "EUR",
+#       "rate": 87.08
 #     }
-# ],
-
-
-
-def top_transactions(transactions):
-
-
-transactions = read_excel_file('data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls')
-result = top_transactions(transactions)
-print(result)
+#   ],
