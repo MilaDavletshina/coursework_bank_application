@@ -1,5 +1,8 @@
 import datetime
 import pandas as pd
+import json
+from utils import get_exchange_rates
+
 
 
 def greeting():
@@ -62,13 +65,31 @@ def top_five_transactions(transactions):
 transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
 # print(top_five_transactions(transactions))
 
-# "currency_rates": [
-#     {
-#       "currency": "USD",
-#       "rate": 73.21
-#     },
-#     {
-#       "currency": "EUR",
-#       "rate": 87.08
-#     }
-#   ],
+
+def get_currency_rates(file):
+    with open(file) as f:
+        data = json.load(f)
+
+    get_list = data.get("user_currencies")
+    usd = get_list[0]
+    eur = get_list[1]
+    currency_usd = get_exchange_rates(usd)
+    currency_eur = get_exchange_rates(eur)
+
+    usd_dict = {
+        "currency": "USD",
+        "rate": currency_usd
+    }
+    eur_dict = {
+        "currency": "EUR",
+        "rate": currency_eur
+    }
+    currency_list = [usd_dict, eur_dict]
+
+    return {"currency_rates": currency_list}
+
+file = "data/user_settings.json"
+print(get_currency_rates(file))
+
+
+
