@@ -39,3 +39,11 @@ def read_excel_file(input_file):
 #
 # input_file = "data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls"
 # print(read_excel_file(input_file))
+
+def get_sort_dict(data, ascending=True):
+    """Функция сортирует по убыванию по сумме платежа. Второй аргумент необязательный, задает порядок сортировки"""
+    return sorted(data, key=lambda x: x.get("Сумма платежа", 0), reverse=ascending)
+
+data = read_excel_file('data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls')
+result = get_sort_dict(data, True)
+print(result)
