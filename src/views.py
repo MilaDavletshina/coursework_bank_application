@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 import json
-from utils import get_exchange_rates
+from utils import get_exchange_rates, get_stock_api_price
 
 
 
@@ -44,7 +44,6 @@ def card_operations_info(transactions):
     return {"cards": card_info}
 
 transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
-
 # print(card_operations_info(transactions))
 
 def top_five_transactions(transactions):
@@ -65,31 +64,56 @@ def top_five_transactions(transactions):
 transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
 # print(top_five_transactions(transactions))
 
-
+#как округлить до двух знаков?
 def get_currency_rates(file):
     with open(file) as f:
         data = json.load(f)
 
-    get_list = data.get("user_currencies")
-    usd = get_list[0]
-    eur = get_list[1]
+    currency_list = data.get("user_currencies")
+    usd = currency_list[0]
+    eur = currency_list[1]
     currency_usd = get_exchange_rates(usd)
     currency_eur = get_exchange_rates(eur)
 
-    usd_dict = {
-        "currency": "USD",
-        "rate": currency_usd
-    }
-    eur_dict = {
-        "currency": "EUR",
-        "rate": currency_eur
-    }
-    currency_list = [usd_dict, eur_dict]
+    usd_dict = {"currency": "USD", "rate": currency_usd}
+    eur_dict = {"currency": "EUR", "rate": currency_eur}
 
-    return {"currency_rates": currency_list}
+    currency_list_exchange = [usd_dict, eur_dict]
+
+    return {"currency_rates": currency_list_exchange}
 
 file = "data/user_settings.json"
-print(get_currency_rates(file))
+# print(get_currency_rates(file))
 
 
+#как округлить до двух знаков?
+def get_stocks_prices(file):
+    with open(file) as f:
+        data_stock = json.load(f)
+        stock_list = data_stock.get("user_stocks")
 
+        AAPL = stock_list[0]
+        AMZN = stock_list[1]
+        GOOGL = stock_list[2]
+        MSFT = stock_list[3]
+        TSLA = stock_list[4]
+
+        stock_AAPL = get_stock_api_price(AAPL)
+        stock_AMZN = get_stock_api_price(AMZN)
+        stock_GOOGL = get_stock_api_price(GOOGL)
+        stock_MSFT = get_stock_api_price(MSFT)
+        stock_TSLA = get_stock_api_price(TSLA)
+
+        AAPL_dict = {"stock": "AAPL", "price": stock_AAPL}
+        AMZN_dict = {"stock": "AMZN", "price": stock_AMZN}
+        GOOGL_dict = {"stock": "GOOGL", "price": stock_GOOGL}
+        MSFT_dict = {"stock": "MSFT", "price": stock_MSFT}
+        TSLA_dict = {"stock": "TSLA", "price": stock_TSLA}
+
+        stocks_list_prices = [AAPL_dict, AMZN_dict, GOOGL_dict, MSFT_dict, TSLA_dict]
+
+        return {"stock_prices": stocks_list_prices}
+
+
+file = "data/user_settings.json"
+# print(get_stocks_prices(file))
