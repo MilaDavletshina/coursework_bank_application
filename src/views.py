@@ -116,4 +116,4 @@ def get_stocks_prices(file):
 
 
 file = "data/user_settings.json"
-# print(get_stocks_prices(file))
+print(get_stocks_prices(file))
