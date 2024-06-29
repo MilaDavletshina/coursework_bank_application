@@ -47,6 +47,7 @@ transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09
 # print(card_operations_info(transactions))
 
 def top_five_transactions(transactions):
+    """Функция выдает топ-5 транзакций по самой большой сумме платежа"""
     df = pd.read_excel(transactions)
     top_transactions = df.nlargest(5, "Сумма платежа")
 
@@ -66,6 +67,7 @@ transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09
 
 #как округлить до двух знаков?
 def get_currency_rates(file):
+    """Функция получает курсы валют"""
     with open(file) as f:
         data = json.load(f)
 
@@ -88,6 +90,7 @@ file = "data/user_settings.json"
 
 #как округлить до двух знаков?
 def get_stocks_prices(file):
+    """Функция отображает стоимость акций"""
     with open(file) as f:
         data_stock = json.load(f)
         stock_list = data_stock.get("user_stocks")
@@ -116,4 +119,5 @@ def get_stocks_prices(file):
 
 
 file = "data/user_settings.json"
-print(get_stocks_prices(file))
+# print(get_stocks_prices(file))
+

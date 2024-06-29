@@ -4,6 +4,7 @@ import pandas as pd
 
 
 def person_money_transfer(input_file):
+    """Функция выводит переводы физическим лицам"""
     transfers = []
     pattern = r'(\w+\s\w\.)'
     data = pd.read_excel(input_file)
@@ -33,6 +34,6 @@ def person_money_transfer(input_file):
     return json.dumps(transfers, ensure_ascii=False, indent=4)
 
 input_file = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
-print(person_money_transfer(input_file))
+# print(person_money_transfer(input_file))
 
 
