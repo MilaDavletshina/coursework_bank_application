@@ -2,12 +2,16 @@ import pandas as pd
 import os
 import requests
 from dotenv import load_dotenv
-from log import setup_logger
 
-log = logger.setup_applevel_logger(file_name = 'utils_log.log')
-log = logger.get_logger(__name__)
+# from log import setup_logger
+
 load_dotenv(".env")
 
+# log = logger.setup_applevel_logger(file_name = 'utils_log.log')
+# log = logger.get_logger(__name__)
+
+
+input_file = os.getenv("INPUT_FILE")
 
 def read_excel_file(input_file):
     """ Функция считываест данные из excel файла"""
@@ -15,17 +19,7 @@ def read_excel_file(input_file):
 
     return excel_data
 
-input_file = "data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls"
 # print(read_excel_file(input_file))
-
-
-def get_sort_dict(data, ascending=True):
-    """Функция сортирует по убыванию по сумме платежа. Второй аргумент необязательный, задает порядок сортировки"""
-    return sorted(data, key=lambda x: x.get("Сумма платежа", 0), reverse=ascending)
-
-data = read_excel_file('data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls')
-# result = get_sort_dict(data, True)
-# print(result)
 
 
 def get_exchange_rates(currency) -> float:
@@ -38,10 +32,10 @@ def get_exchange_rates(currency) -> float:
     response = requests.get(url)
     data = response.json()
     exchange_rates = data['conversion_rates']["RUB"]
-    logger.info("Получен ответ с сервера")
+    # logger.info("Получен ответ с сервера")
     return exchange_rates
 
-print(get_exchange_rates("EUR"))
+# print(get_exchange_rates("EUR"))
 
 def get_stock_api_price(stock) -> float:
     """Функция получаем стоимость акций с сервера API"""

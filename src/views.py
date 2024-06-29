@@ -1,9 +1,13 @@
 import datetime
 import pandas as pd
 import json
+import os
+from dotenv import load_dotenv
 from utils import get_exchange_rates, get_stock_api_price
 
-
+load_dotenv(".env")
+input_file = os.getenv("INPUT_FILE")
+currency_stock_file = os.getenv("CURRENCY_STOCK")
 
 def greeting():
     """Функция приветствия в зависимости от времени суток"""
@@ -20,9 +24,9 @@ def greeting():
 # print(greeting())
 
 # как вывести в красивый список, как округлить до двух знаков?
-def card_operations_info(transactions):
+def card_operations_info(input_file):
     """Функция выводит общую информацию по карте"""
-    data = pd.read_excel(transactions)
+    data = pd.read_excel(input_file)
 
     cards = {}
 
@@ -43,12 +47,11 @@ def card_operations_info(transactions):
 
     return {"cards": card_info}
 
-transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
-# print(card_operations_info(transactions))
+# print(card_operations_info(input_file))
 
-def top_five_transactions(transactions):
+def top_five_transactions(input_file):
     """Функция выдает топ-5 транзакций по самой большой сумме платежа"""
-    df = pd.read_excel(transactions)
+    df = pd.read_excel(input_file)
     top_transactions = df.nlargest(5, "Сумма платежа")
 
     top_transactions_list = []
@@ -62,13 +65,13 @@ def top_five_transactions(transactions):
         top_transactions_list.append(data)
     return {"top_transactions": top_transactions_list}
 
-transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
-# print(top_five_transactions(transactions))
+# transactions = 'data/operations Mon Jan 01 20_45_05 MSK 2024-Mon Jun 24 17_37_09 MSK 2024.xls'
+# print(top_five_transactions(input_file))
 
 #как округлить до двух знаков?
-def get_currency_rates(file):
+def get_currency_rates(currency_stock_file):
     """Функция получает курсы валют"""
-    with open(file) as f:
+    with open(currency_stock_file) as f:
         data = json.load(f)
 
     currency_list = data.get("user_currencies")
@@ -84,14 +87,13 @@ def get_currency_rates(file):
 
     return {"currency_rates": currency_list_exchange}
 
-file = "data/user_settings.json"
-# print(get_currency_rates(file))
+# print(get_currency_rates(currency_stock_file))
 
 
 #как округлить до двух знаков?
-def get_stocks_prices(file):
+def get_stocks_prices(currency_stock_file):
     """Функция отображает стоимость акций"""
-    with open(file) as f:
+    with open(currency_stock_file) as f:
         data_stock = json.load(f)
         stock_list = data_stock.get("user_stocks")
 
@@ -117,7 +119,5 @@ def get_stocks_prices(file):
 
         return {"stock_prices": stocks_list_prices}
 
-
-file = "data/user_settings.json"
-# print(get_stocks_prices(file))
+# print(get_stocks_prices(currency_stock_file))
 

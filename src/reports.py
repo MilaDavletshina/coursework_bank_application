@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 load_dotenv(".env")
+input_file = os.getenv("INPUT_FILE")
 
 def spending_by_category(transactions: pd.DataFrame, category: str, date: Optional[str] = None) -> pd.DataFrame:
     """Функция формирует отчет "траты по категориям" по заданной пользователем категории,
@@ -23,10 +24,10 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
     filtered_transactions['Дата операции'] = filtered_transactions['Дата операции'].dt.strftime('%d.%m.%Y %H:%M:%S')
     return filtered_transactions[['Дата операции', 'Сумма операции', 'Категория']]
 
-input_file = os.getenv("INPUT_FILE")
+
 transactions = pd.read_excel(input_file)
 category = "Супермаркеты"
 date = "01.01.2024"
 
 result = spending_by_category(transactions, category, date)
-print(result)
+# print(result)
