@@ -9,7 +9,9 @@ from log import setup_logger
 load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
 
-logger = setup_logger(datetime.datetime.now().strftime("%Y-%m-%d"))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path_log = os.path.join(current_dir, "../logs", "utils.log")
+logger = setup_logger("utils", file_path_log)
 
 def read_excel_file(input_file):
     """ Функция считываест данные из excel файла"""
@@ -39,7 +41,7 @@ def get_exchange_rates(currency) -> float:
     except ValueError:
         logger.error("Ошибка загрузки. Проверьте введенные данные.")
         return "Ошибка загрузки. Проверьте введенные данные."
-# print(get_exchange_rates("EUR"))
+# print(get_exchange_rates("USD"))
 
 def get_stock_api_price(stock) -> float:
     """Функция получаем стоимость акций с сервера API"""
@@ -50,12 +52,23 @@ def get_stock_api_price(stock) -> float:
     try:
         r = requests.get(url)
         data = r.json()
-        stock_price = data['Global Quote']["05. price"]
-        logger.info("Ответ с сервера API получен")
-        return stock_price
+        if r.status_code == 200:
+            if 'Global Quote' in r:
+                stock_price = data['Global Quote']["05. price"]
+
+                logger.info("Ответ с сервера API получен")
+                return stock_price
+            else:
+                print(f"Ошибка: данные для компании {stock} недоступны. API ответ: {data}")
+                return 0.0
+        else:
+            logger.info("Ошибка загрузки. Проверьте введенные данные.")
+            print(f"Ошибка ответа от API: {r.status_code}")
+            return 0.0
     except ValueError:
         logger.error("Ошибка загрузки. Проверьте введенные данные.")
         return "Ошибка загрузки. Проверьте введенные данные."
+
 
 # print(get_stock_api_price("AAPL"))
 

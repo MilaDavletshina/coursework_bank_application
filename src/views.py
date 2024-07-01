@@ -10,9 +10,11 @@ load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
 currency_stock_file = os.getenv("CURRENCY_STOCK")
 
-logger = setup_logger(datetime.datetime.now().strftime("%Y-%m-%d"))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+file_path_log = os.path.join(current_dir, "../logs", "views.log")
+logger = setup_logger("views", file_path_log)
 
-def greeting():
+def get_greeting():
     """Функция приветствия в зависимости от времени суток"""
     now = datetime.datetime.now()
     if 6 <= now.hour < 12:
@@ -28,7 +30,7 @@ def greeting():
         logger.info("Текущее состояние суток - ночь")
         return "Доброй ночи!"
 
-# print(greeting())
+# print(get_greeting())
 
 
 def card_operations_info(input_file):
@@ -43,11 +45,13 @@ def card_operations_info(input_file):
 
             if card_number in cards:
                 cards[card_number]['total_spent'] += total_spent
+
             else:
+
                 cards[card_number] = {
                     'last_digits': card_number,
-                    'total_spent': round(total_spent, 2),
-                    'cashback': float(total_spent // 100)
+                    'total_spent': total_spent,
+                    'cashback': round(total_spent * 0.01, 2)
                 }
 
         card_info = [value for value in cards.values()]
@@ -57,8 +61,7 @@ def card_operations_info(input_file):
         logger.error("Проверьте формат загруженного файла!")
         return {}
 
-# print(card_operations_info(input_file))
-
+print(card_operations_info(input_file))
 def top_five_transactions(input_file):
     """Функция выдает топ-5 транзакций по самой большой сумме платежа"""
     df = pd.read_excel(input_file)
@@ -79,6 +82,7 @@ def top_five_transactions(input_file):
     except ValueError:
         logger.error("Проверьте формат загруженного файла!")
         return []
+
 
 
 # print(top_five_transactions(input_file))
@@ -143,4 +147,6 @@ def get_stocks_prices(currency_stock_file):
         return []
 
 # print(get_stocks_prices(currency_stock_file))
+
+
 
