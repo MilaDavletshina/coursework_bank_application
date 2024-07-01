@@ -1,9 +1,11 @@
 import logging
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv(".env")
 # LOGS_REPORT = os.getenv("LOGS_REPORT")
+
 
 def setup_logger(name: str, file_logs: str):
     """Функция логирования"""
@@ -15,7 +17,3 @@ def setup_logger(name: str, file_logs: str):
     file_handler.setFormatter(file_formatter)
     logger.addHandler(file_handler)
     return logger
-
-
-
-

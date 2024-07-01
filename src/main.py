@@ -1,13 +1,13 @@
-import os
 import json
+import os
+
 import pandas as pd
-import datetime
 from dotenv import load_dotenv
+
 from reports import spending_by_category
 from services import person_money_transfer
-from views import get_greeting, card_operations_info, top_five_transactions, get_currency_rates, get_stocks_prices
-
-
+from views import (card_operations_info, get_currency_rates, get_greeting,
+                   get_stocks_prices, top_five_transactions)
 
 load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
@@ -26,21 +26,15 @@ def main():
     currency_rate = get_currency_rates(currency_stock_file)
     stock_prices = get_stocks_prices(currency_stock_file)
 
-
     user_info = {
         "greeting": greeting,
         "card_info": card_info,
         "top_five": top_five,
         "currency_rate": currency_rate,
-        "stock_prices": stock_prices
+        "stock_prices": stock_prices,
     }
 
-
     return json.dumps(user_info, ensure_ascii=False, indent=4)
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -49,7 +43,7 @@ if __name__ == "__main__":
     money_transfer = person_money_transfer(input_file)
 
     transactions = pd.read_excel(input_file)
-    spending = spending_by_category(transactions, 'Супермаркеты')
+    spending = spending_by_category(transactions, "Супермаркеты")
 
     print("Отчет. Переводы физическим лицам")
     print(money_transfer)

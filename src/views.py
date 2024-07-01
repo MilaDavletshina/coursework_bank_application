@@ -1,10 +1,12 @@
 import datetime
-import pandas as pd
 import json
 import os
+
+import pandas as pd
 from dotenv import load_dotenv
-from utils import get_exchange_rates, get_stock_api_price
+
 from log import setup_logger
+from utils import get_exchange_rates, get_stock_api_price
 
 load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
@@ -13,6 +15,7 @@ currency_stock_file = os.getenv("CURRENCY_STOCK")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path_log = os.path.join(current_dir, "../logs", "views.log")
 logger = setup_logger("views", file_path_log)
+
 
 def get_greeting():
     """Функция приветствия в зависимости от времени суток"""
@@ -30,6 +33,7 @@ def get_greeting():
         logger.info("Текущее состояние суток - ночь")
         return "Доброй ночи!"
 
+
 # print(get_greeting())
 
 
@@ -40,18 +44,20 @@ def card_operations_info(input_file):
     cards = {}
     try:
         for index, row in data.iterrows():
-            card_number = str(row['Номер карты'])[-4:] if pd.notnull(row['Номер карты']) else None
-            total_spent = float(row['Сумма операции с округлением'])
+            card_number = (
+                str(row["Номер карты"])[-4:] if pd.notnull(row["Номер карты"]) else None
+            )
+            total_spent = float(row["Сумма операции с округлением"])
 
             if card_number in cards:
-                cards[card_number]['total_spent'] += total_spent
+                cards[card_number]["total_spent"] += total_spent
 
             else:
 
                 cards[card_number] = {
-                    'last_digits': card_number,
-                    'total_spent': total_spent,
-                    'cashback': round(total_spent * 0.01, 2)
+                    "last_digits": card_number,
+                    "total_spent": total_spent,
+                    "cashback": round(total_spent * 0.01, 2),
                 }
 
         card_info = [value for value in cards.values()]
@@ -61,7 +67,10 @@ def card_operations_info(input_file):
         logger.error("Проверьте формат загруженного файла!")
         return {}
 
+
 print(card_operations_info(input_file))
+
+
 def top_five_transactions(input_file):
     """Функция выдает топ-5 транзакций по самой большой сумме платежа"""
     df = pd.read_excel(input_file)
@@ -74,7 +83,7 @@ def top_five_transactions(input_file):
                 "date": row["Дата платежа"],
                 "amount": row["Сумма платежа"],
                 "category": row["Категория"],
-                "description": row["Описание"]
+                "description": row["Описание"],
             }
             top_transactions_list.append(data)
             logger.info(f"Функция {top_five_transactions} успешно реализована")
@@ -82,7 +91,6 @@ def top_five_transactions(input_file):
     except ValueError:
         logger.error("Проверьте формат загруженного файла!")
         return []
-
 
 
 # print(top_five_transactions(input_file))
@@ -109,6 +117,7 @@ def get_currency_rates(currency_stock_file):
     except ValueError:
         logger.error("Проверьте формат загруженного файла!")
         return []
+
 
 # print(get_currency_rates(currency_stock_file))
 
@@ -139,14 +148,18 @@ def get_stocks_prices(currency_stock_file):
             MSFT_dict = {"stock": "MSFT", "price": stock_MSFT}
             TSLA_dict = {"stock": "TSLA", "price": stock_TSLA}
 
-            stocks_list_prices = [AAPL_dict, AMZN_dict, GOOGL_dict, MSFT_dict, TSLA_dict]
+            stocks_list_prices = [
+                AAPL_dict,
+                AMZN_dict,
+                GOOGL_dict,
+                MSFT_dict,
+                TSLA_dict,
+            ]
 
             return {"stock_prices": stocks_list_prices}
     except ValueError:
         logger.error("Проверьте формат загруженного файла!")
         return []
 
+
 # print(get_stocks_prices(currency_stock_file))
-
-
-

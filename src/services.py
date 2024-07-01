@@ -1,9 +1,10 @@
-import re
 import json
-import pandas as pd
 import os
-import datetime
+import re
+
+import pandas as pd
 from dotenv import load_dotenv
+
 from src.log import setup_logger
 
 load_dotenv(".env")
@@ -12,10 +13,12 @@ input_file = os.getenv("INPUT_FILE")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path_log = os.path.join(current_dir, "../logs", "services.log")
 logger = setup_logger("services", file_path_log)
+
+
 def person_money_transfer(input_file):
     """Функция выводит переводы физическим лицам"""
     transfers = []
-    pattern = r'(\w+\s\w\.)'
+    pattern = r"(\w+\s\w\.)"
     data = pd.read_excel(input_file)
 
     try:
@@ -27,7 +30,7 @@ def person_money_transfer(input_file):
                     "Статус": row["Статус"],
                     "Сумма платежа": row["Сумма платежа"],
                     "Категория": row["Категория"],
-                    "Описание": description
+                    "Описание": description,
                 }
                 transfers.append(transfer)
                 logger.info(f"функция {person_money_transfer} успешно реализована")
@@ -37,6 +40,5 @@ def person_money_transfer(input_file):
         logger.error("Проверьте формат загруженного файла!")
         return []
 
+
 # print(person_money_transfer(input_file))
-
-
