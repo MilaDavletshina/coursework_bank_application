@@ -37,9 +37,20 @@ def get_exchange_rates(currency) -> float:
     try:
         response = requests.get(url)
         data = response.json()
-        exchange_rates = data["conversion_rates"]["RUB"]
-        logger.info("Ответ с сервера API получен")
-        return exchange_rates
+        if response.status_code == 200:
+            if "conversion_rates" in response:
+                exchange_rates = data["conversion_rates"]["RUB"]
+                logger.info("Ответ с сервера API получен")
+                return exchange_rates
+            else:
+                print(
+                    f"Ошибка: данные для валюты {currency} недоступны. API ответ: {data}"
+                )
+                return 0.0
+        else:
+            logger.info("Ошибка загрузки. Проверьте введенные данные.")
+            print(f"Ошибка ответа от API: {response.status_code}")
+            return 0.0
     except ValueError:
         logger.error("Ошибка загрузки. Проверьте введенные данные.")
         return "Ошибка загрузки. Проверьте введенные данные."

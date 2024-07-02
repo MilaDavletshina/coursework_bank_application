@@ -5,8 +5,8 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
-from log import setup_logger
-from utils import get_exchange_rates, get_stock_api_price
+from src.log import setup_logger
+from src.utils import get_exchange_rates, get_stock_api_price
 
 load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
@@ -68,7 +68,7 @@ def card_operations_info(input_file):
         return {}
 
 
-print(card_operations_info(input_file))
+# print(card_operations_info(input_file))
 
 
 def top_five_transactions(input_file):

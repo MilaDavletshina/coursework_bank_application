@@ -2,7 +2,9 @@ import pandas as pd
 from datetime import datetime, timedelta
 from src.reports import spending_by_category
 
+# ok
 def test_spending_by_category_no_date():
+    """Тест проверяет количество операций по заданной категории без даты"""
     transactions = pd.DataFrame({
         'Дата операции': ['2024-06-20 17:53:01', '2024-06-18 17:25:15', '2024-06-11 09:55:02'],
         'Сумма операции': [-416.57, -158.00, -259.98],
@@ -11,8 +13,9 @@ def test_spending_by_category_no_date():
 
     result = spending_by_category(transactions, 'Супермаркеты')
     assert len(result) == 3
-
+#ok
 def test_spending_by_category_with_date():
+    """Тест проверяет количество операций по заданной категории и дате"""
     transactions = pd.DataFrame({
         'Дата операции': ['2024-06-20 17:53:01', '2024--18 17:25:15', '2024-06-11 09:55:02'],
         'Сумма операции': [-416.57, -158.00, -259.98],
