@@ -1,8 +1,8 @@
-import pandas as pd
-import os
 import json
-from unittest.mock import patch
+import os
+
 import pytest
+
 from src.services import person_money_transfer
 
 
@@ -19,7 +19,8 @@ def sample_input_file(tests):
         file.write(sample_data)
     return file_path
 
-def test_person_money_transfer(sample_input_file):
+
+def test_person_money_transfer_tmp(sample_input_file):
     """Тест записывает данные во временный файл для тестирования"""
     expected_output = [
         {
@@ -27,40 +28,42 @@ def test_person_money_transfer(sample_input_file):
             "Статус": "Выполнен",
             "Сумма платежа": 100,
             "Категория": "Перевод",
-            "Описание": "Иванов И.И."
+            "Описание": "Иванов И.И.",
         }
     ]
 
     result = person_money_transfer(sample_input_file)
     assert result == json.dumps(expected_output, ensure_ascii=False, indent=4)
 
-#nok
+
+# nok
 def test_person_money_transfer_invalid_file():
+    """Функция тестирования переводы физ.лицу"""
     with pytest.raises(ValueError):
         person_money_transfer("invalid_file.xlsx")
+
 
 @pytest.mark.parametrize(
     "data, expected",
     [
-        ({
-                    "Дата операции": "01.01.2024 20:45:05",
-                    "Статус": "OK",
-                    "Сумма платежа": 600.0,
-                    "Категория": "Переводы",
-                    "Описание": "Ольга С.",
-                }, {
-                    "Дата операции": "01.01.2024 20:45:05",
-                    "Статус": "OK",
-                    "Сумма платежа": 600.0,
-                    "Категория": "Переводы",
-                    "Описание": "Ольга С.",
-                }
-         )
+        (
+            {
+                "Дата операции": "01.01.2024 20:45:05",
+                "Статус": "OK",
+                "Сумма платежа": 600.0,
+                "Категория": "Переводы",
+                "Описание": "Ольга С.",
+            },
+            {
+                "Дата операции": "01.01.2024 20:45:05",
+                "Статус": "OK",
+                "Сумма платежа": 600.0,
+                "Категория": "Переводы",
+                "Описание": "Ольга С.",
+            },
+        )
     ],
 )
 def test_person_money_transfer(data, expected):
     """Тест проверяет перевод физическому лицу"""
     assert person_money_transfer(data) == expected
-
-
-

@@ -1,13 +1,17 @@
-import datetime
-import pytest
+from unittest.mock import mock_open, patch
+
 import pandas as pd
-from src.views import card_operations_info, get_greeting, top_five_transactions, get_currency_rates, get_stocks_prices
-from unittest.mock import patch, mock_open, Mock
+import pytest
+from freezegun import freeze_time
+
+from src.views import (card_operations_info, get_currency_rates, get_greeting,
+                       get_stocks_prices, top_five_transactions)
+
 
 @pytest.fixture
 def sample_input_file(tmp_path):
     data = {
-        "Номер карты": [*7371, None],
+        "Номер карты": ["*7371", "None"],
         "Сумма операции с округлением": [500.0, 150.0],
     }
     df = pd.DataFrame(data)
@@ -15,8 +19,9 @@ def sample_input_file(tmp_path):
     df.to_excel(file_path, index=False)
     return str(file_path)
 
+
 def test_card_operations_info(sample_input_file):
-    """"Тест на проверку информации по карте"""
+    """ "Тест на проверку информации по карте"""
     expected_output = {
         "cards": [
             {
@@ -33,18 +38,31 @@ def test_card_operations_info(sample_input_file):
     }
     assert card_operations_info(sample_input_file) == expected_output
 
+
 def test_card_operations_info_with_invalid_file(tmp_path):
     invalid_file_path = tmp_path / "invalid_file.xlsx"
     invalid_file_path.write_text("invalid file content")
     assert card_operations_info(invalid_file_path) == {}
 
-@pytest.mark.parametrize(
-    "date, expected",
-    [(datetime.datetime.now(), datetime.datetime.now())])
 
-def test_get_greeting(date: str, expected: str) -> None:
-    """Тест на проверку текущего времени"""
-    assert 'Доброе утро!' == get_greeting()
+@freeze_time("2023-10-01 08:00:00")
+def test_greeting_morning():
+    assert get_greeting() == "Доброе утро!"
+
+
+@freeze_time("2023-10-01 13:00:00")
+def test_greeting_afternoon():
+    assert get_greeting() == "Добрый день!"
+
+
+@freeze_time("2023-10-01 19:00:00")
+def test_greeting_evening():
+    assert get_greeting() == "Добрый вечер!"
+
+
+@freeze_time("2023-10-01 03:00:00")
+def test_greeting_night():
+    assert get_greeting() == "Доброй ночи!"
 
 
 def test_top_five_transactions(mocker):
@@ -53,7 +71,7 @@ def test_top_five_transactions(mocker):
         "Дата платежа": "30.05.2024 23:26:03",
         "Сумма платежа": 500.0,
         "Категория": "Переводы",
-        "Описание": "Ekaterina P."
+        "Описание": "Ekaterina P.",
     }
     df = pd.DataFrame([data])
 
@@ -68,14 +86,16 @@ def test_top_five_transactions(mocker):
     assert result["top_transactions"][0]["category"] == data["Категория"]
     assert result["top_transactions"][0]["description"] == data["Описание"]
 
+
 def test_get_currency_rates_invalid_format():
-    data = 'invalid_json_data'
+    data = "invalid_json_data"
     with patch("builtins.open", mock_open(read_data=data)):
         result = get_currency_rates("test_file.json")
         assert result == []
 
+
 def test_get_stocks_prices_invalid_format():
-    data = 'invalid_json_data'
+    data = "invalid_json_data"
     with patch("builtins.open", mock_open(read_data=data)):
         result = get_stocks_prices("test_file.json")
         assert result == []

@@ -1,7 +1,6 @@
 import datetime
 import json
 import os
-
 import pandas as pd
 from dotenv import load_dotenv
 
@@ -53,7 +52,6 @@ def card_operations_info(input_file):
                 cards[card_number]["total_spent"] += total_spent
 
             else:
-
                 cards[card_number] = {
                     "last_digits": card_number,
                     "total_spent": total_spent,
