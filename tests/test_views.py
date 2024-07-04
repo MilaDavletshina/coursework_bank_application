@@ -40,9 +40,9 @@ def test_card_operations_info(sample_input_file):
 
 
 def test_card_operations_info_with_invalid_file(tmp_path):
-    invalid_file_path = tmp_path / "invalid_file.xlsx"
-    invalid_file_path.write_text("invalid file content")
-    assert card_operations_info(invalid_file_path) == {}
+    invalid_file_path = tmp_path / "test_file.xlsx"
+    invalid_file_path.write_text("test file content")
+    assert card_operations_info(invalid_file_path, engine='openpyxl') == {}
 
 
 @freeze_time("2023-10-01 08:00:00")

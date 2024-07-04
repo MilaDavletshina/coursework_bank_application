@@ -41,4 +41,4 @@ def person_money_transfer(input_file):
         return []
 
 
-print(person_money_transfer(input_file))
+# print(person_money_transfer(input_file))

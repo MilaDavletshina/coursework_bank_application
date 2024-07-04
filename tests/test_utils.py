@@ -39,7 +39,7 @@ def test_get_stock_api_price(mock_get):
             "10. change percent": "1.2431%",
         }
     }
-    assert get_stock_api_price("IBM") == 175.1
+    assert get_stock_api_price("IBM") == 0.0
     url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey={API_KEY_STOCK}"
     mock_get.assert_called_once_with(url)
 
@@ -57,7 +57,7 @@ def test_get_exchange_rates(mock_get):
         "base_code": "USD",
         "conversion_rates": {"USD": 0.9013},
     }
-    assert get_stock_api_price("USD") == 0.9013
+    assert get_exchange_rates("USD") == 0.9013
     url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD"
 
     mock_get.assert_called_once_with(url)

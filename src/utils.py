@@ -39,7 +39,7 @@ def get_exchange_rates(currency) -> float:
         data = response.json()
         if response.status_code == 200:
             if "conversion_rates" in response:
-                exchange_rates = data["conversion_rates"]["RUB"]
+                exchange_rates = datacc
                 logger.info("Ответ с сервера API получен")
                 return exchange_rates
             else:
