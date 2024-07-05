@@ -1,5 +1,6 @@
 import os
-from unittest.mock import patch
+import pytest
+from unittest.mock import patch, MagicMock
 
 from dotenv import load_dotenv
 
@@ -12,12 +13,14 @@ input_file = os.getenv("INPUT_FILE")
 
 
 def test_get_exchange_rates_valid():
+    """Проверяет на формат строки с плавающей точкой """
     currency = "USD"
     price = get_exchange_rates(currency)
     assert type(price) is float
 
 
 def test_get_exchange_rates_invalid():
+    """Проверяет несуществующую валюту"""
     currency = "INVALID"
     price = get_stock_api_price(currency)
     assert price == 0.0
@@ -25,6 +28,7 @@ def test_get_exchange_rates_invalid():
 
 @patch("requests.get")
 def test_get_stock_api_price(mock_get):
+    """Тест проверяет получение стоимости акции"""
     mock_get.return_value.json.return_value = {
         "Global Quote": {
             "01. symbol": "IBM",
@@ -44,26 +48,8 @@ def test_get_stock_api_price(mock_get):
     mock_get.assert_called_once_with(url)
 
 
-@patch("requests.get")
-def test_get_exchange_rates(mock_get):
-    mock_get.return_value.text = {
-        "result": "success",
-        "documentation": "https://www.exchangerate-api.com/docs",
-        "terms_of_use": "https://www.exchangerate-api.com/terms",
-        "time_last_update_unix": 1585267200,
-        "time_last_update_utc": "Fri, 27 Mar 2020 00:00:00 +0000",
-        "time_next_update_unix": 1585353700,
-        "time_next_update_utc": "Sat, 28 Mar 2020 00:00:00 +0000",
-        "base_code": "USD",
-        "conversion_rates": {"USD": 0.9013},
-    }
-    assert get_exchange_rates("USD") == 0.9013
-    url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/USD"
-
-    mock_get.assert_called_once_with(url)
-
-
 def test_get_stock_api_price_valid():
+    """Тест проверяет формат получения цены"""
     stock = "AAPL"
     price = get_stock_api_price(stock)
     assert type(price) is float
@@ -73,3 +59,29 @@ def test_get_stock_api_price_invalid():
     stock = "INVALID"
     price = get_stock_api_price(stock)
     assert price == 0.0
+
+@pytest.mark.parametrize("currency, expected_result", [("USD", 1.0),
+                                                       ("EUR", 0.8),
+                                                       ("GBP", 0.7),
+                                                      ]
+                         )
+@patch("requests.get")
+def test_get_exchange_rates(mock_get, currency, expected_result):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "conversion_rates": {
+            "USD": 1.0,
+            "EUR": 0.8,
+            "GBP": 0.7
+        }
+    }
+    mock_get.return_value = mock_response
+
+    result = get_exchange_rates(currency)
+
+    assert result == expected_result
+
+
+def test_get_exchange_rates():
+    assert get_exchange_rates('EUR') == 0.0

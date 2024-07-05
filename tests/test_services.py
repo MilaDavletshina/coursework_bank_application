@@ -2,10 +2,8 @@ import pytest
 import pandas as pd
 import json
 import os
-from unittest.mock import patch
 from src.services import person_money_transfer
 
-# Путь к тестовым файлам
 TEST_FILE_PATH = 'test_file.xlsx'
 
 def create_test_file(data):
