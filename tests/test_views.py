@@ -4,8 +4,12 @@ import pandas as pd
 import pytest
 from freezegun import freeze_time
 
-from src.views import (card_operations_info, get_currency_rates, get_greeting,
-                       get_stocks_prices, top_five_transactions)
+from src.views import (
+    card_operations_info,
+    get_currency_rates,
+    get_greeting,
+    top_five_transactions,
+)
 
 
 @pytest.fixture
@@ -86,6 +90,3 @@ def test_get_currency_rates_invalid_format():
     with patch("builtins.open", mock_open(read_data=data)):
         result = get_currency_rates("test_file.json")
         assert result == []
-
-
-

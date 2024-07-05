@@ -4,12 +4,14 @@ import json
 import os
 from src.services import person_money_transfer
 
-TEST_FILE_PATH = 'test_file.xlsx'
+TEST_FILE_PATH = "test_file.xlsx"
+
 
 def create_test_file(data):
     """Создание тестового файла"""
     df = pd.DataFrame(data)
     df.to_excel(TEST_FILE_PATH, index=False)
+
 
 def test_successful_transfer():
     """Тест проверяет успешное выполнение функции"""
@@ -18,7 +20,7 @@ def test_successful_transfer():
         "Статус": ["OK", "OK"],
         "Сумма платежа": [100, 200],
         "Категория": ["Переводы", "Переводы"],
-        "Описание": ["Ольга С.", "Катя П."]
+        "Описание": ["Ольга С.", "Катя П."],
     }
     create_test_file(data)
 
@@ -29,17 +31,18 @@ def test_successful_transfer():
             "Статус": "OK",
             "Сумма платежа": 100,
             "Категория": "Переводы",
-            "Описание": "Ольга С."
+            "Описание": "Ольга С.",
         },
         {
             "Дата операции": "2024-01-02",
             "Статус": "OK",
             "Сумма платежа": 200,
             "Категория": "Переводы",
-            "Описание": "Катя П."
-        }
+            "Описание": "Катя П.",
+        },
     ]
     assert json.loads(result) == expected
+
 
 def test_no_transfers():
     """Тест на отсутствие перевода"""
@@ -48,12 +51,13 @@ def test_no_transfers():
         "Статус": ["OK", "OK"],
         "Сумма платежа": [100, 200],
         "Категория": ["Переводы", "Переводы"],
-        "Описание": ["ФИО_1", "ФИО_2"]
+        "Описание": ["ФИО_1", "ФИО_2"],
     }
     create_test_file(data)
 
     result = person_money_transfer(TEST_FILE_PATH)
     assert result == json.dumps([], ensure_ascii=False, indent=4)
+
 
 def remove_module():
     """Удаление тестового файла"""

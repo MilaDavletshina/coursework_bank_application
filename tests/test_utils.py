@@ -1,6 +1,7 @@
 import os
-import pytest
-from unittest.mock import patch, MagicMock
+
+from unittest.mock import patch
+
 
 from dotenv import load_dotenv
 
@@ -13,7 +14,7 @@ input_file = os.getenv("INPUT_FILE")
 
 
 def test_get_exchange_rates_valid():
-    """Проверяет на формат строки с плавающей точкой """
+    """Проверяет на формат строки с плавающей точкой"""
     currency = "USD"
     price = get_exchange_rates(currency)
     assert type(price) is float
@@ -60,28 +61,7 @@ def test_get_stock_api_price_invalid():
     price = get_stock_api_price(stock)
     assert price == 0.0
 
-@pytest.mark.parametrize("currency, expected_result", [("USD", 1.0),
-                                                       ("EUR", 0.8),
-                                                       ("GBP", 0.7),
-                                                      ]
-                         )
-@patch("requests.get")
-def test_get_exchange_rates(mock_get, currency, expected_result):
-    mock_response = MagicMock()
-    mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "conversion_rates": {
-            "USD": 1.0,
-            "EUR": 0.8,
-            "GBP": 0.7
-        }
-    }
-    mock_get.return_value = mock_response
 
-    result = get_exchange_rates(currency)
-
-    assert result == expected_result
-
-
-def test_get_exchange_rates():
-    assert get_exchange_rates('EUR') == 0.0
+def test_get_exchange_rates_1():
+    """Тест ппроверяет на ошибку получения данных с сервера"""
+    assert get_exchange_rates("EUR") == 0.0

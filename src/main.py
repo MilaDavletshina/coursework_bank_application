@@ -6,8 +6,13 @@ from dotenv import load_dotenv
 
 from src.reports import spending_by_category
 from src.services import person_money_transfer
-from src.views import (card_operations_info, get_currency_rates, get_greeting,
-                   get_stocks_prices, top_five_transactions)
+from src.views import (
+    card_operations_info,
+    get_currency_rates,
+    get_greeting,
+    get_stocks_prices,
+    top_five_transactions,
+)
 
 load_dotenv(".env")
 input_file = os.getenv("INPUT_FILE")
