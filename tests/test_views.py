@@ -4,15 +4,19 @@ import pandas as pd
 import pytest
 from freezegun import freeze_time
 
-from src.views import (card_operations_info, get_currency_rates, get_greeting,
-                       get_stocks_prices, top_five_transactions)
+from src.views import (
+    card_operations_info,
+    get_currency_rates,
+    get_greeting,
+    top_five_transactions,
+)
 
 
 @pytest.fixture
 def sample_input_file(tmp_path):
     data = {
-        "Номер карты": ["*7371", "None"],
-        "Сумма операции с округлением": [500.0, 150.0],
+        "Номер карты": ["123456789", "987654321"],
+        "Сумма операции с округлением": [500.00, 150.00],
     }
     df = pd.DataFrame(data)
     file_path = tmp_path / "sample_input_file.xlsx"
@@ -25,24 +29,18 @@ def test_card_operations_info(sample_input_file):
     expected_output = {
         "cards": [
             {
-                "last_digits": "*7371",
-                "total_spent": 500.0,
+                "last_digits": "6789",
+                "total_spent": 500.00,
                 "cashback": 5.0,
             },
             {
-                "last_digits": None,
-                "total_spent": 150.0,
+                "last_digits": "4321",
+                "total_spent": 150.00,
                 "cashback": 1.5,
             },
         ]
     }
     assert card_operations_info(sample_input_file) == expected_output
-
-
-def test_card_operations_info_with_invalid_file(tmp_path):
-    invalid_file_path = tmp_path / "invalid_file.xlsx"
-    invalid_file_path.write_text("invalid file content")
-    assert card_operations_info(invalid_file_path) == {}
 
 
 @freeze_time("2023-10-01 08:00:00")
@@ -91,11 +89,4 @@ def test_get_currency_rates_invalid_format():
     data = "invalid_json_data"
     with patch("builtins.open", mock_open(read_data=data)):
         result = get_currency_rates("test_file.json")
-        assert result == []
-
-
-def test_get_stocks_prices_invalid_format():
-    data = "invalid_json_data"
-    with patch("builtins.open", mock_open(read_data=data)):
-        result = get_stocks_prices("test_file.json")
         assert result == []

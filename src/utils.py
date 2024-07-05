@@ -30,7 +30,6 @@ def read_excel_file(input_file):
 
 def get_exchange_rates(currency) -> float:
     """Функция получает курс валюты с сервера API"""
-
     API_KEY = os.getenv("API_KEY")
 
     url = f"https://v6.exchangerate-api.com/v6/{API_KEY}/latest/{currency}"
@@ -39,7 +38,7 @@ def get_exchange_rates(currency) -> float:
         data = response.json()
         if response.status_code == 200:
             if "conversion_rates" in response:
-                exchange_rates = data["conversion_rates"]["RUB"]
+                exchange_rates = data
                 logger.info("Ответ с сервера API получен")
                 return exchange_rates
             else:

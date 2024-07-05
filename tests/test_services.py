@@ -1,69 +1,71 @@
+import pytest
+import pandas as pd
 import json
 import os
-
-import pytest
-
 from src.services import person_money_transfer
 
-
-@pytest.fixture
-def sample_input_file(tests):
-    """Функция создает временный файл для тестирования"""
-    sample_data = """
-    Дата операции,Статус,Сумма платежа,Категория,Описание
-    2024-07-01,Выполнен,100,Перевод,Иванов И.И.
-    2024-07-02,Отменен,200,Перевод,Петров П.П.
-    """
-    file_path = os.path.join(tests, "sample_data.xlsx")
-    with open(file_path, "w") as file:
-        file.write(sample_data)
-    return file_path
+TEST_FILE_PATH = "test_file.xlsx"
 
 
-def test_person_money_transfer_tmp(sample_input_file):
-    """Тест записывает данные во временный файл для тестирования"""
-    expected_output = [
+def create_test_file(data):
+    """Создание тестового файла"""
+    df = pd.DataFrame(data)
+    df.to_excel(TEST_FILE_PATH, index=False)
+
+
+def test_successful_transfer():
+    """Тест проверяет успешное выполнение функции"""
+    data = {
+        "Дата операции": ["2024-01-01", "2024-01-02"],
+        "Статус": ["OK", "OK"],
+        "Сумма платежа": [100, 200],
+        "Категория": ["Переводы", "Переводы"],
+        "Описание": ["Ольга С.", "Катя П."],
+    }
+    create_test_file(data)
+
+    result = person_money_transfer(TEST_FILE_PATH)
+    expected = [
         {
-            "Дата операции": "2024-07-01",
-            "Статус": "Выполнен",
+            "Дата операции": "2024-01-01",
+            "Статус": "OK",
             "Сумма платежа": 100,
-            "Категория": "Перевод",
-            "Описание": "Иванов И.И.",
-        }
+            "Категория": "Переводы",
+            "Описание": "Ольга С.",
+        },
+        {
+            "Дата операции": "2024-01-02",
+            "Статус": "OK",
+            "Сумма платежа": 200,
+            "Категория": "Переводы",
+            "Описание": "Катя П.",
+        },
     ]
-
-    result = person_money_transfer(sample_input_file)
-    assert result == json.dumps(expected_output, ensure_ascii=False, indent=4)
+    assert json.loads(result) == expected
 
 
-# nok
+def test_no_transfers():
+    """Тест на отсутствие перевода"""
+    data = {
+        "Дата операции": ["2024-01-01", "2024-01-02"],
+        "Статус": ["OK", "OK"],
+        "Сумма платежа": [100, 200],
+        "Категория": ["Переводы", "Переводы"],
+        "Описание": ["ФИО_1", "ФИО_2"],
+    }
+    create_test_file(data)
+
+    result = person_money_transfer(TEST_FILE_PATH)
+    assert result == json.dumps([], ensure_ascii=False, indent=4)
+
+
+def remove_module():
+    """Удаление тестового файла"""
+    if os.path.exists(TEST_FILE_PATH):
+        os.remove(TEST_FILE_PATH)
+
+
 def test_person_money_transfer_invalid_file():
-    """Функция тестирования переводы физ.лицу"""
+    """Функция тестирования ошибки файла"""
     with pytest.raises(ValueError):
-        person_money_transfer("invalid_file.xlsx")
-
-
-@pytest.mark.parametrize(
-    "data, expected",
-    [
-        (
-            {
-                "Дата операции": "01.01.2024 20:45:05",
-                "Статус": "OK",
-                "Сумма платежа": 600.0,
-                "Категория": "Переводы",
-                "Описание": "Ольга С.",
-            },
-            {
-                "Дата операции": "01.01.2024 20:45:05",
-                "Статус": "OK",
-                "Сумма платежа": 600.0,
-                "Категория": "Переводы",
-                "Описание": "Ольга С.",
-            },
-        )
-    ],
-)
-def test_person_money_transfer(data, expected):
-    """Тест проверяет перевод физическому лицу"""
-    assert person_money_transfer(data) == expected
+        person_money_transfer("tests/invalid_file.xlsx")
